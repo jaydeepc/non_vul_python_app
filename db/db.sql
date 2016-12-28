@@ -25,12 +25,12 @@ GRANT ALL ON *.* to user@'%';
 
 USE Feedback;
 
-DROP TABLE IF EXISTS `tbl_user`;
+DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `reviews`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 
-CREATE TABLE `tbl_user` (
+CREATE TABLE `users` (
   `user_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(45) DEFAULT NULL,
   `user_username` varchar(45) DEFAULT NULL,
@@ -52,9 +52,9 @@ CREATE TABLE `reviews` (
 -- Dumping data for table `tbl_user`
 --
 
-LOCK TABLES `tbl_user` WRITE;
+LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `tbl_user` DISABLE KEYS */;
-INSERT INTO `tbl_user` VALUES (1,'Admin','admin','admin'),(2,'Guest','guest','guest'),(3,'jd','jd_test','test');
+INSERT INTO `users` VALUES (1,'Admin','admin','admin'),(2,'Guest','guest','guest'),(3,'jd','jd_test','test');
 /*!40000 ALTER TABLE `tbl_user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
