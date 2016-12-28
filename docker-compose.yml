@@ -1,0 +1,21 @@
+db:
+  container_name: db_server
+  hostname: db_server
+  image: mysql
+  ports:
+    - 3306:3306
+  expose:
+    - 3306
+  environment:
+    MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+    MYSQL_DATABASE: 'Feedback'
+  volumes:
+   - ../vul_feedback_app/db:/docker-entrypoint-initdb.d
+
+myapp:
+  container_name: app_server
+  build: .
+  ports:
+    - 5000:5000
+  links:
+    - 'db:db_server'
