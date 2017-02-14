@@ -4,12 +4,22 @@ import webbrowser
 import werkzeug
 from flask import Flask, render_template, request, json, session, send_file, g
 from models.models import db, Users, Reviews
+from flask import make_response
+from flask_talisman import Talisman, ALLOW_FROM
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/Feedback'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db.init_app(app)
+# talisman = Talisman(app)
 
+csp = {
+    'default-src': [
+        '\'self\'',
+        'https://ajax.googleapis.com',
+        'http://netdna.bootstrapcdn.com'
+    ]
+}
 
 @app.errorhandler(500)
 def handle_internal_server_error(error):
@@ -25,6 +35,7 @@ def main():
 
 
 @app.route('/home', methods=['POST'])
+# @talisman(content_security_policy=csp)
 def login():
     _username = request.form['username']
     _password = request.form['inputPassword']
@@ -50,6 +61,7 @@ def login():
 
 
 @app.route('/home/submitted_review', methods=['POST'])
+# @talisman(content_security_policy=csp)
 def writeblog():
     _review_hotel = request.form['hotel']
     _review_city = request.form['city']
@@ -63,10 +75,14 @@ def writeblog():
     except Exception as e:
         print (e)
         db.session.rollback()
-    return render_template('index.html', section="features")
+
+    r = make_response(render_template('index.html', section="features"))
+    r.headers.set('Content-Security-Policy', "default-src 'self'")
+    return r
 
 
 @app.route('/home', methods=['GET'])
+# @talisman(content_security_policy=csp)
 def search():
     if not session.get('logged_in'):
         return render_template('login.html')
@@ -87,11 +103,13 @@ def search():
         db.session.rollback()
 
     g.search_term = _search_term
-
-    return render_template('index.html', items=data, section="features")
+    r = make_response(render_template('index.html', items=data, section="features"))
+    r.headers.set('Content-Security-Policy', "default-src 'self'")
+    return r
 
 
 @app.route("/logout")
+# @talisman(content_security_policy=csp)
 def logout():
     session['logged_in'] = False
     app.secret_key = os.urandom(12)
@@ -99,6 +117,7 @@ def logout():
 
 
 @app.route('/home/getfiles', methods=['GET'])
+# @talisman(content_security_policy=csp)
 def get_file():
     if not session.get('logged_in'):
         return render_template('login.html')
