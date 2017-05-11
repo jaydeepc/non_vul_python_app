@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, json, session, send_file, g
 from models.models import db, Users, Reviews
 from flask import make_response
 from flask_talisman import Talisman, ALLOW_FROM
+from pathlib import Path
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root@localhost/Feedback'
@@ -123,7 +124,11 @@ def get_file():
         return render_template('login.html')
     else:
         file = request.args['file']
-        return send_file(file)
+        my_file = Path("static/" + file)
+        if my_file.is_file():
+            return send_file(file)
+        else:
+            return "Operation not allowed"
 
 
 if __name__ == "__main__":
